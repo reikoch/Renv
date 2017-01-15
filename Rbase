@@ -1,0 +1,13 @@
+# create several R versions on centos 6.6
+FROM centos:6.6
+
+MAINTAINER Reinhold Koch <https://github.com/reikoch/Renv>
+
+ENV PATH /opt/R/bin:$PATH
+ENV LD_LIBRARY_PATH /opt/R/lib:$LD_LIBRARY_PATH
+ENV CFLAGS "-I/opt/R/include"
+ENV LDFLAGS "-L/opt/R/lib"
+
+RUN yum -y update && yum -y install yum-utils epel-release tar \
+    && yum-builddep -y R && mkdir -p /opt/R /tmp/Renv/extra
+COPY extra /tmp/Renv/extra
