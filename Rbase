@@ -3,11 +3,23 @@ FROM centos:6.6
 
 MAINTAINER Reinhold Koch <https://github.com/reikoch/Renv>
 
-ENV PATH /opt/R/bin:$PATH
-ENV LD_LIBRARY_PATH /opt/R/lib:$LD_LIBRARY_PATH
-ENV CFLAGS "-I/opt/R/include"
-ENV LDFLAGS "-L/opt/R/lib"
+ENV RINST=/opt/R
+ENV PATH=$RINST/bin:$PATH \
+    LD_LIBRARY_PATH=$RINST/lib:$LD_LIBRARY_PATH \
+    CFLAGS="-I$RINST/include" \
+    LDFLAGS="-L$RINST/lib"
 
-RUN yum -y update && yum -y install yum-utils epel-release tar \
-    && yum-builddep -y R && mkdir -p /opt/R /tmp/Renv/extra
+RUN yum -y install yum-utils epel-release tar bzip2 \
+    && yum-builddep -y R && mkdir -p $RINST /tmp/Renv/extra
 COPY extra /tmp/Renv/extra
+RUN cd /tmp/Renv/extra && tar xzf bzip2-1.0.6.tar.gz \
+   && tar xzf zlib-1.2.8.tar.gz && tar xjf curl-7.48.0.tar.bz2 \
+   && tar xjf pcre-8.38.tar.bz2 && tar xjf xz-5.2.2.tar.bz2 \
+   && cd pcre-8.38 && ./configure --enable-utf8 --prefix=$RINST &&\
+      make && make install \
+   && cd ../curl-7.48.0 && ./configure --prefix=$RINST && make && make install \
+   && cd ../xz-5.2.2 && ./configure --prefix=$RINST && make && make install \
+   && cd ../bzip2-1.0.6 && make -f Makefile-libbz2_so && make clean && \
+      make -n install PREFIX=$RINST && make install PREFIX=$RINST \
+   && cd ../zlib-1.2.8 && ./configure --prefix=$RINST && make && make install \
+   && cd && rm -rf /tmp/Renv/extra
