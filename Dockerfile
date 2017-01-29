@@ -7,7 +7,8 @@ ENV PATH=$RINST/bin:$PATH \
     CFLAGS="-I$RINST/include" \
     LDFLAGS="-L$RINST/lib"
 
-RUN yum -y install yum-utils epel-release tar bzip2 \
+RUN yum -y install yum-utils epel-release tar bzip2 cairo-devel readline-devel \
+    libicu-devel libXt-devel openssl-devel \
     java-1.8.0-openjdk-devel centos-release-scl && mkdir -p $RINST/extra
 COPY extra $RINST/extra
 RUN yum install -y devtoolset-6 && source scl_source enable devtoolset-6 \
@@ -16,6 +17,7 @@ RUN yum install -y devtoolset-6 && source scl_source enable devtoolset-6 \
 RUN source scl_source enable devtoolset-6 && cd $RINST/extra && tar xzf bzip2-1.0.6.tar.gz \
    && tar xzf zlib-1.2.8.tar.gz && tar xjf curl-7.48.0.tar.bz2 \
    && tar xjf pcre-8.38.tar.bz2 && tar xjf xz-5.2.2.tar.bz2 \
+   && tar xzf R-3.3.2.tar.gz \
    && cd pcre-8.38 && ./configure --enable-utf8 --prefix=$RINST &&\
       make && make install \
    && cd ../curl-7.48.0 && ./configure --prefix=$RINST && make && make install \
