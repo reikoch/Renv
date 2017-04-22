@@ -1,8 +1,6 @@
 # create several R versions on centos 6.6
 FROM centos:6.6
 
-MAINTAINER Reinhold Koch <https://github.com/reikoch/Renv>
-
 ENV RINST=/opt/R
 ENV PATH=$RINST/bin:$PATH \
     LD_LIBRARY_PATH=$RINST/lib:$LD_LIBRARY_PATH \
